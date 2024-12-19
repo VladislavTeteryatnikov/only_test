@@ -1,0 +1,5 @@
+#Редирект с любого адреса на index.php, кроме тех случаев, когда физически существует такой файл или директория
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) index.php [L]
