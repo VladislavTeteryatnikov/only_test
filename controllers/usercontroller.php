@@ -4,16 +4,18 @@
     {
         public object $userModel;
 
-        private object $helper;
-
         public function __construct()
         {
             $this->userModel = new User;
-            $this->helper = new Helper();
         }
 
         public function actionReg()
         {
+            if (Helper::checkIfUserAuthorized($this->userModel)){
+                header('Location:' . FULL_SITE_ROOT);
+                die();
+            }
+
             session_start();
             if (!isset($_SESSION['token'])) {
                 $token = md5(uniqid(rand(), true));
@@ -78,6 +80,11 @@
 
         public function actionAuth()
         {
+            if (Helper::checkIfUserAuthorized($this->userModel)){
+                header('Location:' . FULL_SITE_ROOT);
+                die();
+            }
+
             session_start();
             if (!isset($_SESSION['token'])) {
                 $token = md5(uniqid(rand(), true));
