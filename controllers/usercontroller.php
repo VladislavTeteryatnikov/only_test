@@ -77,6 +77,10 @@
                 if ($userInfo['count'] === '0') {
                     $errors[] = "Такой связки не существует";
                 }
+                $token = $_POST['smart-token']; //Например, $_POST['smart-token'];
+                if (!Helper::checkCaptcha($token)) {
+                    $errors[] = "Капча не пройдена";
+                }
 
                 if (empty($errors)) {
 
