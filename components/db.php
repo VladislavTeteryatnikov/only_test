@@ -12,6 +12,7 @@
             require_once ("configs/db.php");
             $connect = mysqli_connect($db['HOST'], $db['USER'], $db['PASSWORD'], $db['DB_NAME']);
             mysqli_set_charset($connect, $db['CHARSET']);
+
             self::$connection = $connect;
         }
 
