@@ -12,11 +12,15 @@
             </div>
 
             <div class="card-body">
+              <div class="text-danger mb-2">
+                <?php echo empty($errors) ? '' : Errors::showErrors($errors); ?>
+              </div>
+
               <form action="" method="POST">
 
                 <div class="mb-3">
                   <label>Телефон или Email</label>
-                  <input type="text" name="phone_email" class="form-control" value="" autofocus>
+                  <input type="text" name="phone_email" class="form-control" value="<?php echo empty($_POST['phone_email']) ? '' : $_POST['phone_email']; ?>" autofocus>
                 </div>
 
                 <div class="mb-3">

@@ -65,7 +65,35 @@
 
         public function actionAuth()
         {
-            $title = "Регистрация";
+            $errors = [];
+
+            if (isset($_POST['phone_email'])) {
+
+                $phoneOrEmail = htmlentities($_POST['phone_email']);
+                $password = htmlentities($_POST['password']);
+                $hashedPassword = md5($password);
+
+                $userInfo = $this->userModel->getUserInfo($phoneOrEmail, $hashedPassword);
+                if ($userInfo['count'] === '0') {
+                    $errors[] = "Такой связки не существует";
+                }
+
+                if (empty($errors)) {
+
+                    $token = Helper::generateToken();
+                    $tokenTime = time() + 3 * 60;
+                    $userId = $userInfo['user_id'];
+                    $this->userModel->auth($userId, $token, $tokenTime);
+
+                    setcookie("uid", $userId, time() + 2 * 24 * 3600, '/');
+                    setcookie("t", $token, time() + 2 * 24 * 3600, '/');
+                    setcookie("tt", $tokenTime, time() + 2 * 24 * 3600, '/');
+
+                    header('Location:' . FULL_SITE_ROOT);;
+                }
+            }
+
+            $title = "Авторизация";
             include_once("views/users/auth.html");
         }
     }

@@ -34,14 +34,26 @@
             return mysqli_query($this->connect, $query);
         }
 
-        public function getUserInfo(string $email, string $hashedPassword)
+        public function getUserInfo(string $emailOrPhone, string $hashedPassword)
         {
             $query = "
                 SELECT COUNT(*) AS `count`, `user_id`
                 FROM `users`
-                WHERE `user_email` = '$email' AND `user_password` = '$hashedPassword';
+                WHERE (`user_email` = '$emailOrPhone' OR `user_phone` = '$emailOrPhone')
+                  AND `user_password` = '$hashedPassword';
             ";
             $result = mysqli_query($this->connect, $query);
             return mysqli_fetch_assoc($result);
+        }
+
+        public function auth(int $userId, string $token, int $tokenTime)
+        {
+            $query = "
+                INSERT INTO `connects`
+                SET `connect_user_id` = $userId,
+                    `connect_token` = '$token',
+                    `connect_token_time` = FROM_UNIXTIME($tokenTime);
+            ";
+            return mysqli_query($this->connect, $query);
         }
     }
