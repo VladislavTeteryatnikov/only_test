@@ -2,6 +2,13 @@
 
     class Helper
     {
+        public object $userModel;
+
+        public function __construct()
+        {
+            $this->userModel = new User;
+        }
+
         public static function generateToken($size = 32):string
         {
             $symbols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f', 'g'];
@@ -40,5 +47,29 @@
             return $resp->status === "ok";
         }
 
+        public static function checkIfUserAuthorized(User $userModel)
+        {
+            if (!isset($_COOKIE['uid']) || !isset($_COOKIE['t']) || !isset($_COOKIE['tt'])) {
+                return false;
+            }
 
+            $userId = htmlentities($_COOKIE['uid']);
+            $token = htmlentities($_COOKIE['t']);
+            $tokenTime = htmlentities($_COOKIE['tt']);
+
+            $connectId = $userModel->checkIfUserAuthorized($userId, $token);
+            if (!$connectId) {
+                return false;
+            }
+            if ($tokenTime < time()) {
+                $newToken = self::generateToken();
+                $newTokenTime = time() + 3 * 60;
+                setcookie("uid", $userId, time() + 2 * 24 * 3600, '/');
+                setcookie("t", $newToken, time() + 2 * 24 * 3600, '/');
+                setcookie("tt", $newTokenTime, time() + 2 * 24 * 3600, '/');
+
+                $userModel->updateConnects($newToken, $newTokenTime, $connectId);
+            }
+            return true;
+        }
 }

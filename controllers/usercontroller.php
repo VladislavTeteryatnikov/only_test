@@ -9,6 +9,7 @@
         public function __construct()
         {
             $this->userModel = new User;
+            $this->helper = new Helper();
         }
 
         public function actionReg()
@@ -113,5 +114,41 @@
             setcookie("t", "", time() - 10, '/');
             setcookie("tt", 0, time() - 10, '/');
             header('Location:' . FULL_SITE_ROOT );;
+        }
+
+        public function actionAccount()
+        {
+            if (!Helper::checkIfUserAuthorized($this->userModel)){
+                header('Location:' . FULL_SITE_ROOT);
+                die();
+            }
+            $userId = $_COOKIE['uid'];
+            $userInfo = $this->userModel->getUserInfoById($userId);
+
+            if (isset($_POST['login'])) {
+                $errors = [];
+
+                $login = htmlentities($_POST['login']);
+                $phone = htmlentities($_POST['phone']);
+                $email = htmlentities($_POST['email']);
+                $password = !empty($_POST['password']) ? htmlentities($_POST['password']) : null;
+                $repeatPassword = !empty($_POST['password_confirmation']) ? htmlentities($_POST['password_confirmation']) : null;
+
+                if ($password !== $repeatPassword) {
+                    $errors[] = "Пароли не совпадают";
+                }
+
+                if (empty($errors)) {
+                    $hashedPassword = !empty($password) ? md5($password) : null;
+
+                    $result = $this->userModel->edit($email, $login, $phone, $hashedPassword, $userId);
+                    if ($result) {
+                        header('Location:' . FULL_SITE_ROOT);
+                    }
+                }
+            }
+
+            $title = "Личный кабинет";
+            include_once("views/users/account.html");
         }
     }
