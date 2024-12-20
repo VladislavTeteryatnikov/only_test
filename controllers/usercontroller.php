@@ -9,7 +9,6 @@
         public function __construct()
         {
             $this->userModel = new User;
-            //$this->helper = new Helper();
         }
 
         public function actionReg()
@@ -37,7 +36,7 @@
 
                      //Если нашлось совпадение, то выводим ошибку
                      if ((int)$count === 1) {
-                         $errors[] = "Такие логин, телефон или email уже зарегистрированы";
+                         $errors[] = "Логин, телефон или email уже зарегистрированы";
                      }
                  }
 
