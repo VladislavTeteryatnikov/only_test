@@ -100,4 +100,18 @@
             $title = "Авторизация";
             include_once("views/users/auth.html");
         }
+
+        public function actionLogout()
+        {
+            if (isset($_COOKIE['uid']) && isset($_COOKIE['t'])) {
+                $userId = htmlentities($_COOKIE['uid']);
+                $token = htmlentities($_COOKIE['t']);
+                $this->userModel->logout($userId, $token);
+            }
+
+            setcookie("uid", "", time() - 10, '/');
+            setcookie("t", "", time() - 10, '/');
+            setcookie("tt", 0, time() - 10, '/');
+            header('Location:' . FULL_SITE_ROOT );;
+        }
     }

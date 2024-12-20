@@ -56,4 +56,15 @@
             ";
             return mysqli_query($this->connect, $query);
         }
+
+        public function logout($userId, $token)
+        {
+            $query = "
+                DELETE FROM `connects`
+                    WHERE `connect_user_id` = $userId
+                        AND `connect_token` = '$token';
+            ";
+            return mysqli_query($this->connect, $query);
+        }
+
     }
