@@ -17,7 +17,7 @@
                             </div>
 
                             <form action="" method="POST">
-
+                                <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
                                 <div class="mb-3">
                                     <label>Логин</label>
                                     <input type="text" name="login" class="form-control" value="<?php echo empty($_POST['login']) ? '' : $_POST['login']; ?>" autofocus>

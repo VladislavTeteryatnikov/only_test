@@ -14,17 +14,29 @@
 
         public function actionReg()
         {
+            session_start();
+            if (!isset($_SESSION['token'])) {
+                $token = md5(uniqid(rand(), true));
+                $_SESSION['token'] = $token;
+            }
+
             //Пустой массив, куда будем помещать ошибки, возникающие при заполнении формы
             $errors = [];
 
             if (isset($_POST['login'])) {
+
+                if ($_POST['token'] != $_SESSION['token']) {
+                    header('Location:' . FULL_SITE_ROOT);
+                    die();
+                }
+
                 $login = htmlentities($_POST['login']);
                 $phone = htmlentities($_POST['phone']);
                 $email = htmlentities($_POST['email']);
                 $password = htmlentities($_POST['password']);
                 $repeatPassword = htmlentities($_POST['password_confirmation']);
 
-                //Производим валидацию данных
+
                 if (empty($login) || empty($phone) || empty($email) || empty($password) || empty($repeatPassword)){
                     $errors[] = "Необходимо заполнить все поля";
                 }
@@ -66,9 +78,20 @@
 
         public function actionAuth()
         {
+            session_start();
+            if (!isset($_SESSION['token'])) {
+                $token = md5(uniqid(rand(), true));
+                $_SESSION['token'] = $token;
+            }
+
             $errors = [];
 
             if (isset($_POST['phone_email'])) {
+
+                if ($_POST['token'] != $_SESSION['token']) {
+                    header('Location:' . FULL_SITE_ROOT);
+                    die();
+                }
 
                 $phoneOrEmail = htmlentities($_POST['phone_email']);
                 $password = htmlentities($_POST['password']);
@@ -122,6 +145,13 @@
                 header('Location:' . FULL_SITE_ROOT);
                 die();
             }
+
+            session_start();
+            if (!isset($_SESSION['token'])) {
+                $token = md5(uniqid(rand(), true));
+                $_SESSION['token'] = $token;
+            }
+
             $userId = $_COOKIE['uid'];
             $userInfo = $this->userModel->getUserInfoById($userId);
 
